@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AccessibleCalculator</string>
+    <string name="start_string">Start</string>
+    <string name="number_input_0_string">0</string>
+</resources>
