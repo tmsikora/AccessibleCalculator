@@ -41,15 +41,15 @@ class InstructionActivity : ComponentActivity() {
 
     private fun getInstructionsText(): String {
         // Customize the instructions text here
-        return "1. Perform simple math operations using the calculator.\n" +
-                "2. Use touch gestures to input numbers and operations.\n" +
-                "3. Listen to the spoken feedback for accessibility.\n\n" +
-                "Tap anywhere on the screen or wait for 10 seconds to continue."
+        return "1. Wykonuj proste operacje matematyczne za pomocą kalkulatora.\n" +
+                "2. Używaj gestów dotykowych do wprowadzania liczb i operacji.\n" +
+                "3. Słuchaj informacji zwrotnej w formie mówionej dla dostępności.\n\n" +
+                "Stuknij w dowolne miejsce na ekranie lub poczekaj 10 sekund, aby kontynuować."
     }
 
     private fun navigateToNumberInput() {
         // Navigate to the NumberInputActivity
-        val intent = Intent(this, NumberInputActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
 
         // Remove any remaining callbacks to prevent unwanted navigation

@@ -5,10 +5,13 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <Button
-        android:id="@+id/startButton"
+    <TextView
+        android:id="@+id/startTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
         android:text="@string/start_string" />
 
 </LinearLayout>

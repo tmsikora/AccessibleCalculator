@@ -46,6 +46,7 @@ class ChooseOperationActivity : ComponentActivity() {
             if (currentOperation == MathOperation.EQUALS) {
                 // If the current operation is EQUALS, navigate to ResultActivity
                 val intent = Intent(this, ResultActivity::class.java)
+                intent.putExtra(ResultActivity.EQUATION_KEY, DataHolder.getInstance().currentEquation)
                 startActivity(intent)
             } else {
                 // Navigate to NumberInputActivity (or any other activity you want)
