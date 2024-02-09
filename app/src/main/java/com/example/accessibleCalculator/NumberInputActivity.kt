@@ -29,11 +29,20 @@ class NumberInputActivity : ComponentActivity() {
 
         updateNumberTextView()
 
-        // Set a touch listener to increase the number on tap
+        // Set a touch listener to increase the number based on the number of fingers pressed
         findViewById<View>(android.R.id.content).setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                increaseNumber()
-                updateNumberTextView()
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN,
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    // Increment the current number by 1 for each finger press
+                    currentNumber++
+                    // Update the TextView to reflect the new number
+                    updateNumberTextView()
+                }
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_POINTER_UP -> {
+                    // Do nothing on finger release
+                }
             }
             true
         }
@@ -69,10 +78,6 @@ class NumberInputActivity : ComponentActivity() {
                 dialog.dismiss()
             }
             .show()
-    }
-
-    private fun increaseNumber() {
-        currentNumber++
     }
 
     private fun updateNumberTextView() {

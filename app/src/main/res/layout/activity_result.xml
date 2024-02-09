@@ -9,7 +9,7 @@
             android:id="@+id/resultTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:textSize="64sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
 

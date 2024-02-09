@@ -48,7 +48,7 @@ class ResultActivity : ComponentActivity() {
             }
         }
 
-        resultTextView.text = "Wynik: $equation$formattedResult"
+        resultTextView.text = "Wynik:\n$equation$formattedResult"
 
         // Find the root view of the layout
         val rootView = findViewById<View>(android.R.id.content)
