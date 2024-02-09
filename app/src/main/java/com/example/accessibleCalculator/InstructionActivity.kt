@@ -1,6 +1,7 @@
 package com.example.accessibleCalculator
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 
 class InstructionActivity : ComponentActivity() {
 
@@ -37,6 +39,22 @@ class InstructionActivity : ComponentActivity() {
             }
             true
         }
+
+        onBackPressedDispatcher.addCallback(this) {
+            showExitPrompt()
+        }
+    }
+
+    private fun showExitPrompt() {
+        // Show your custom prompt or dialog here
+        // For example, you can use AlertDialog to display the prompt
+        AlertDialog.Builder(this)
+            .setMessage("Czy na pewno chcesz wyjść z aplikacji?")
+            .setPositiveButton("Tak") { _, _ -> finishAffinity() } // Exit the entire app
+            .setNegativeButton("Nie") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun getInstructionsText(): String {
