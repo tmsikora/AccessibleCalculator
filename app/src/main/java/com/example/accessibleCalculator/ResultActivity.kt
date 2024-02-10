@@ -5,14 +5,19 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import java.util.Locale
 import java.util.Stack
 
-class ResultActivity : ComponentActivity() {
+class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+
+    private var formattedResult: String = ""
+    private lateinit var textToSpeech: TextToSpeech
 
     companion object {
         const val EQUATION_KEY = "equation"
@@ -22,6 +27,8 @@ class ResultActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
+
+        textToSpeech = TextToSpeech(this, this)
 
         val resultTextView: TextView = findViewById(R.id.resultTextView)
 
@@ -34,7 +41,7 @@ class ResultActivity : ComponentActivity() {
         Log.d("ResultActivity", "Calculated result: $result")
 
         // Format the result based on whether it's a whole number or not
-        val formattedResult = if (result == result.toInt().toDouble()) {
+        formattedResult = if (result == result.toInt().toDouble()) {
             result.toInt().toString()  // If the result is a whole number, remove the decimal part
         } else {
             // If the result has a fractional part, format it to three decimal places
@@ -65,6 +72,34 @@ class ResultActivity : ComponentActivity() {
         onBackPressedDispatcher.addCallback(this) {
             showExitPrompt()
         }
+    }
+
+    override fun onDestroy() {
+        // Shutdown the text-to-speech engine when the activity is destroyed
+        textToSpeech.stop()
+        textToSpeech.shutdown()
+        super.onDestroy()
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            // Set the language for the text-to-speech engine
+            val result = textToSpeech.setLanguage(Locale("pl", "PL"))
+
+            // Check if the language is supported
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                // Log an error or show a message if the language is not supported
+            } else {
+                // Speak the text when the activity is created
+                speak("Wynik wynosi: $formattedResult")
+            }
+        } else {
+            // Log an error if the text-to-speech engine initialization failed
+        }
+    }
+
+    private fun speak(text: String) {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     private fun showExitPrompt() {
