@@ -31,7 +31,8 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         const val EQUATION_KEY = "equation"
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +75,7 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         // Set a click listener on the root view
         rootView.setOnClickListener {
             textToSpeech.stop()
-            vibrate(400)    // Vibrate for 400 milliseconds
+            vibrate()
             playClickSound()
             // Clear the equation
             DataHolder.getInstance().currentEquation = ""
@@ -118,8 +119,8 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun vibrate(milliseconds: Long) {
-        val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
+    private fun vibrate() {
+        val vibrationEffect = VibrationEffect.createOneShot(400, VibrationEffect.DEFAULT_AMPLITUDE)
         vibrator.vibrate(vibrationEffect)
     }
 
