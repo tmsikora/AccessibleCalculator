@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
-    @RequiresApi(Build.VERSION_CODES.S)
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

@@ -3,7 +3,6 @@ package com.example.accessibleCalculator
 import DataHolder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
@@ -30,14 +29,15 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
-    @RequiresApi(Build.VERSION_CODES.S)
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_number_input)
 
         textToSpeech = TextToSpeech(this, this)
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
         numberTextView = findViewById(R.id.numberTextView)
