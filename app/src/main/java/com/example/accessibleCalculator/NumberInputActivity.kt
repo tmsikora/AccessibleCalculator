@@ -3,8 +3,13 @@ package com.example.accessibleCalculator
 import DataHolder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.MotionEvent
@@ -13,6 +18,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import androidx.annotation.RequiresApi
 import java.util.Locale
 
 class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
@@ -21,13 +27,18 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var numberTextView: TextView
     private lateinit var acceptButton: Button
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var vibrator: Vibrator
+    private lateinit var clickSoundPlayer: MediaPlayer
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_number_input)
 
         textToSpeech = TextToSpeech(this, this)
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
         numberTextView = findViewById(R.id.numberTextView)
         acceptButton = findViewById(R.id.acceptButton)
@@ -44,6 +55,8 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                     currentNumber++
                     // Update the TextView to reflect the new number
                     updateNumberTextView()
+                    // Vibrate for 50 milliseconds
+                    vibrate(50)
                     // Speak the updated number
                     speak("$currentNumber")
                 }
@@ -58,6 +71,8 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         // Set a click listener for the Accept button
         acceptButton.setOnClickListener {
             textToSpeech.stop()
+            vibrate(400)    // Vibrate for 400 milliseconds
+            playClickSound()
             // Add the current number to the shared equation string
             addNumberToEquation()
             // Navigate to ChooseOperationActivity
@@ -75,6 +90,7 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         // Shutdown the text-to-speech engine when the activity is destroyed
         textToSpeech.stop()
         textToSpeech.shutdown()
+        clickSoundPlayer.release()
         super.onDestroy()
     }
 
@@ -97,6 +113,16 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private fun speak(text: String) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun vibrate(milliseconds: Long) {
+        val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
+        vibrator.vibrate(vibrationEffect)
+    }
+
+    private fun playClickSound() {
+        clickSoundPlayer.start()
     }
 
     private fun showExitPrompt() {

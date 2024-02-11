@@ -3,14 +3,20 @@ package com.example.accessibleCalculator
 import DataHolder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import androidx.annotation.RequiresApi
 import java.util.Locale
 import java.util.Stack
 
@@ -18,17 +24,22 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private var formattedResult: String = ""
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var vibrator: Vibrator
+    private lateinit var clickSoundPlayer: MediaPlayer
 
     companion object {
         const val EQUATION_KEY = "equation"
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
         textToSpeech = TextToSpeech(this, this)
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
         val resultTextView: TextView = findViewById(R.id.resultTextView)
 
@@ -62,6 +73,9 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
         // Set a click listener on the root view
         rootView.setOnClickListener {
+            textToSpeech.stop()
+            vibrate(400)    // Vibrate for 400 milliseconds
+            playClickSound()
             // Clear the equation
             DataHolder.getInstance().currentEquation = ""
             // Start MainActivity when the screen is clicked
@@ -78,6 +92,7 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         // Shutdown the text-to-speech engine when the activity is destroyed
         textToSpeech.stop()
         textToSpeech.shutdown()
+        clickSoundPlayer.release()
         super.onDestroy()
     }
 
@@ -100,6 +115,16 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private fun speak(text: String) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun vibrate(milliseconds: Long) {
+        val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
+        vibrator.vibrate(vibrationEffect)
+    }
+
+    private fun playClickSound() {
+        clickSoundPlayer.start()
     }
 
     private fun showExitPrompt() {
