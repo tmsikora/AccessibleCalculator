@@ -151,7 +151,10 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         }
 
         // Remove any spaces from the equation
-        val cleanEquation = equation.replace("\\s".toRegex(), "")
+        val cleanEquation = equation
+            .replace("\\s".toRegex(), "")
+            .replace("×", "*")
+            .replace("÷", "/")
 
         // Use a stack to evaluate the expression with proper precedence
         val numberStack = Stack<Double>()
