@@ -51,7 +51,14 @@ class ResultActivity : BaseActivity() {
             }
         }
 
-        resultTextView.text = "$equation$formattedResult"
+        if (equation != null) {
+            if ((equation.length + formattedResult.length) > 12) {
+                resultTextView.text = "$equation\n$formattedResult"
+            } else {
+                resultTextView.text = "$equation$formattedResult"
+            }
+        }
+
         speak("Wynik wynosi: $formattedResult")
 
         // Find the root view of the layout
