@@ -2,15 +2,12 @@ package com.example.accessibleCalculator
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
@@ -22,10 +19,8 @@ class InstructionActivity : ComponentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 32000 // 32 seconds
-    private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
-    @Suppress("DEPRECATION")
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +29,7 @@ class InstructionActivity : ComponentActivity() {
 
         TextToSpeechManager.initialize(this, getInstructionsText())
 
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibratorManager = VibratorManager.getInstance(this)
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
         // Show the instructions
@@ -51,7 +46,7 @@ class InstructionActivity : ComponentActivity() {
         findViewById<View>(android.R.id.content).setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 TextToSpeechManager.shutdown()
-                vibrate()
+                vibratorManager.vibrate(400)
                 playClickSound()
                 navigateToNumberInput()
                 finish()
@@ -65,7 +60,6 @@ class InstructionActivity : ComponentActivity() {
     }
 
 
-
     override fun onDestroy() {
         // Stop and shutdown the text-to-speech engine when the activity is destroyed
         TextToSpeechManager.shutdown()
@@ -73,12 +67,6 @@ class InstructionActivity : ComponentActivity() {
         handler.removeCallbacksAndMessages(null)
         clickSoundPlayer.release()
         super.onDestroy()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun vibrate() {
-        val vibrationEffect = VibrationEffect.createOneShot(400, VibrationEffect.DEFAULT_AMPLITUDE)
-        vibrator.vibrate(vibrationEffect)
     }
 
     private fun playClickSound() {

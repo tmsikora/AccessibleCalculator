@@ -7,8 +7,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -23,10 +22,9 @@ class NumberInputActivity : ComponentActivity() {
     private var currentNumber: Int = 0
     private lateinit var numberTextView: TextView
     private lateinit var acceptButton: Button
-    private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
-    @Suppress("DEPRECATION")
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +32,7 @@ class NumberInputActivity : ComponentActivity() {
         setContentView(R.layout.activity_number_input)
 
         TextToSpeechManager.initialize(this, "Wybierz liczbę. $currentNumber")
-        vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        val vibratorManager = VibratorManager.getInstance(this)
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
         numberTextView = findViewById(R.id.numberTextView)
@@ -53,7 +51,7 @@ class NumberInputActivity : ComponentActivity() {
                     // Update the TextView to reflect the new number
                     updateNumberTextView()
                     // Vibrate for 50 milliseconds
-                    vibrate(50)
+                    vibratorManager.vibrate(50)
                     // Speak the updated number
                     TextToSpeechManager.speak("$currentNumber")
                 }
@@ -68,7 +66,7 @@ class NumberInputActivity : ComponentActivity() {
         // Set a click listener for the Accept button
         acceptButton.setOnClickListener {
             TextToSpeechManager.shutdown()
-            vibrate(400)    // Vibrate for 400 milliseconds
+            vibratorManager.vibrate(400)    // Vibrate for 400 milliseconds
             playClickSound()
             // Add the current number to the shared equation string
             addNumberToEquation()
@@ -88,13 +86,6 @@ class NumberInputActivity : ComponentActivity() {
         TextToSpeechManager.shutdown()
         clickSoundPlayer.release()
         super.onDestroy()
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun vibrate(milliseconds: Long) {
-        val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
-        vibrator.vibrate(vibrationEffect)
     }
 
     private fun playClickSound() {

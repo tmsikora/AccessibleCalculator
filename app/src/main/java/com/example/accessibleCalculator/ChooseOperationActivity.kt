@@ -2,13 +2,10 @@ package com.example.accessibleCalculator
 
 import DataHolder
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -22,17 +19,15 @@ class ChooseOperationActivity : ComponentActivity() {
     private lateinit var operationTextView: TextView
     private lateinit var acceptButton: Button
     private var currentOperation: MathOperation = MathOperation.ADDITION
-    private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
-    @Suppress("DEPRECATION")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_operation)
 
         TextToSpeechManager.initialize(this, "Wybierz operację matematyczną. Dodawanie.")
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibratorManager = VibratorManager.getInstance(this)
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
         operationTextView = findViewById(R.id.operationTextView)
@@ -44,7 +39,7 @@ class ChooseOperationActivity : ComponentActivity() {
         // Set a click listener for the root layout to change the operation on tap
         findViewById<View>(android.R.id.content).setOnClickListener {
             toggleOperation()
-            vibrate(50)    // Vibrate for 50 milliseconds
+            vibratorManager.vibrate(50)    // Vibrate for 50 milliseconds
             when (currentOperation) {
                 MathOperation.ADDITION -> TextToSpeechManager.speak("Dodawanie.")
                 MathOperation.SUBTRACTION -> TextToSpeechManager.speak("Odejmowanie.")
@@ -59,7 +54,7 @@ class ChooseOperationActivity : ComponentActivity() {
         // Set a click listener for the Accept button
         acceptButton.setOnClickListener {
             TextToSpeechManager.shutdown()
-            vibrate(400)    // Vibrate for 400 milliseconds
+            vibratorManager.vibrate(400)    // Vibrate for 400 milliseconds
             playClickSound()
 
             // Add the current operation symbol to the shared equation string
@@ -89,12 +84,6 @@ class ChooseOperationActivity : ComponentActivity() {
         TextToSpeechManager.shutdown()
         clickSoundPlayer.release()
         super.onDestroy()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun vibrate(milliseconds: Long) {
-        val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
-        vibrator.vibrate(vibrationEffect)
     }
 
     private fun playClickSound() {
