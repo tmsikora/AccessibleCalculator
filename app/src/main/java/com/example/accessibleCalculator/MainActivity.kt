@@ -1,5 +1,6 @@
 package com.example.accessibleCalculator
 
+import TextToSpeechManager
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -8,16 +9,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.speech.tts.TextToSpeech
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
-import java.util.Locale
 
-class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+class MainActivity : ComponentActivity() {
 
-    private lateinit var textToSpeech: TextToSpeech
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
@@ -26,8 +24,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        textToSpeech = TextToSpeech(this, this)
+        TextToSpeechManager.initialize(this, "Aby rozpocząć obliczenia, dotknij ekranu.")
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
@@ -35,7 +32,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
         // Set a click listener on the root layout to start the InstructionActivity
         rootLayout.setOnClickListener {
-            textToSpeech.stop()
+//            TextToSpeechManager.shutdown()
             vibrate()
             playClickSound()
             val intent = Intent(this, NumberInputActivity::class.java)
@@ -45,35 +42,14 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         onBackPressedDispatcher.addCallback(this) {
             showExitPrompt()
         }
+
     }
 
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
-        textToSpeech.stop()
-        textToSpeech.shutdown()
+        TextToSpeechManager.shutdown()
         clickSoundPlayer.release()
         super.onDestroy()
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            // Set the language for the text-to-speech engine
-            val result = textToSpeech.setLanguage(Locale("pl", "PL"))
-
-            // Check if the language is supported
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Log an error or show a message if the language is not supported
-            } else {
-                // Speak the text when the activity is created
-                "Aby rozpocząć obliczenia, dotknij ekranu.".speak()
-            }
-        } else {
-            // Log an error if the text-to-speech engine initialization failed
-        }
-    }
-
-    private fun String.speak() {
-        textToSpeech.speak(this, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

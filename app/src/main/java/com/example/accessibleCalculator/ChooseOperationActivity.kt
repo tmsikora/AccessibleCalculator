@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -17,22 +16,12 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
-import java.util.Locale
 
-enum class MathOperation(val symbol: String) {
-    ADDITION("+"),
-    SUBTRACTION("-"),
-    MULTIPLICATION("×"),
-    DIVISION("÷"),
-    EQUALS("=");
-}
-
-class ChooseOperationActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+class ChooseOperationActivity : ComponentActivity() {
 
     private lateinit var operationTextView: TextView
     private lateinit var acceptButton: Button
     private var currentOperation: MathOperation = MathOperation.ADDITION
-    private lateinit var textToSpeech: TextToSpeech
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
@@ -42,7 +31,7 @@ class ChooseOperationActivity : ComponentActivity(), TextToSpeech.OnInitListener
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_operation)
 
-        textToSpeech = TextToSpeech(this, this)
+        TextToSpeechManager.initialize(this, "Wybierz operację matematyczną. Dodawanie.")
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
@@ -57,19 +46,19 @@ class ChooseOperationActivity : ComponentActivity(), TextToSpeech.OnInitListener
             toggleOperation()
             vibrate(50)    // Vibrate for 50 milliseconds
             when (currentOperation) {
-                MathOperation.ADDITION -> speak("Dodawanie.")
-                MathOperation.SUBTRACTION -> speak("Odejmowanie.")
-                MathOperation.MULTIPLICATION -> speak("Mnożenie.")
-                MathOperation.DIVISION -> speak("Dzielenie.")
+                MathOperation.ADDITION -> TextToSpeechManager.speak("Dodawanie.")
+                MathOperation.SUBTRACTION -> TextToSpeechManager.speak("Odejmowanie.")
+                MathOperation.MULTIPLICATION -> TextToSpeechManager.speak("Mnożenie.")
+                MathOperation.DIVISION -> TextToSpeechManager.speak("Dzielenie.")
                 else -> {
-                    speak("Równa się.")
+                    TextToSpeechManager.speak("Równa się.")
                 }
             }
         }
 
         // Set a click listener for the Accept button
         acceptButton.setOnClickListener {
-            textToSpeech.stop()
+            TextToSpeechManager.shutdown()
             vibrate(400)    // Vibrate for 400 milliseconds
             playClickSound()
 
@@ -97,31 +86,9 @@ class ChooseOperationActivity : ComponentActivity(), TextToSpeech.OnInitListener
 
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
-        textToSpeech.stop()
-        textToSpeech.shutdown()
+        TextToSpeechManager.shutdown()
         clickSoundPlayer.release()
         super.onDestroy()
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            // Set the language for the text-to-speech engine
-            val result = textToSpeech.setLanguage(Locale("pl", "PL"))
-
-            // Check if the language is supported
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Log an error or show a message if the language is not supported
-            } else {
-                // Speak the text when the activity is created
-                speak("Wybierz operację matematyczną. Dodawanie.")
-            }
-        } else {
-            // Log an error if the text-to-speech engine initialization failed
-        }
-    }
-
-    private fun speak(text: String) {
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

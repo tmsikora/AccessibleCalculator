@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -18,14 +17,12 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
-import java.util.Locale
 
-class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+class NumberInputActivity : ComponentActivity() {
 
     private var currentNumber: Int = 0
     private lateinit var numberTextView: TextView
     private lateinit var acceptButton: Button
-    private lateinit var textToSpeech: TextToSpeech
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
@@ -36,7 +33,7 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_number_input)
 
-        textToSpeech = TextToSpeech(this, this)
+        TextToSpeechManager.initialize(this, "Wybierz liczbę. $currentNumber")
         vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
@@ -58,7 +55,7 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                     // Vibrate for 50 milliseconds
                     vibrate(50)
                     // Speak the updated number
-                    speak("$currentNumber")
+                    TextToSpeechManager.speak("$currentNumber")
                 }
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> {
@@ -70,7 +67,7 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
         // Set a click listener for the Accept button
         acceptButton.setOnClickListener {
-            textToSpeech.stop()
+            TextToSpeechManager.shutdown()
             vibrate(400)    // Vibrate for 400 milliseconds
             playClickSound()
             // Add the current number to the shared equation string
@@ -88,32 +85,11 @@ class NumberInputActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
-        textToSpeech.stop()
-        textToSpeech.shutdown()
+        TextToSpeechManager.shutdown()
         clickSoundPlayer.release()
         super.onDestroy()
     }
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            // Set the language for the text-to-speech engine
-            val result = textToSpeech.setLanguage(Locale("pl", "PL"))
-
-            // Check if the language is supported
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Log an error or show a message if the language is not supported
-            } else {
-                // Speak the text when the activity is created
-                speak("Wybierz liczbę. $currentNumber")
-            }
-        } else {
-            // Log an error if the text-to-speech engine initialization failed
-        }
-    }
-
-    private fun speak(text: String) {
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun vibrate(milliseconds: Long) {

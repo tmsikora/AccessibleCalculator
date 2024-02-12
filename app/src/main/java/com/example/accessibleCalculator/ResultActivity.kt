@@ -1,6 +1,7 @@
 package com.example.accessibleCalculator
 
 import DataHolder
+import TextToSpeechManager
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
@@ -10,20 +11,17 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
-import java.util.Locale
 import java.util.Stack
 
-class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+class ResultActivity : ComponentActivity() {
 
     private var formattedResult: String = ""
-    private lateinit var textToSpeech: TextToSpeech
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
 
@@ -38,7 +36,7 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        textToSpeech = TextToSpeech(this, this)
+        TextToSpeechManager.initialize(this, "")
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
 
@@ -67,6 +65,7 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             }
         }
 
+        TextToSpeechManager.speak("Wynik wynosi: $formattedResult")
         resultTextView.text = "Wynik:\n$equation$formattedResult"
 
         // Find the root view of the layout
@@ -74,7 +73,7 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
         // Set a click listener on the root view
         rootView.setOnClickListener {
-            textToSpeech.stop()
+            TextToSpeechManager.shutdown()
             vibrate()
             playClickSound()
             // Clear the equation
@@ -91,31 +90,9 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
-        textToSpeech.stop()
-        textToSpeech.shutdown()
+        TextToSpeechManager.shutdown()
         clickSoundPlayer.release()
         super.onDestroy()
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            // Set the language for the text-to-speech engine
-            val result = textToSpeech.setLanguage(Locale("pl", "PL"))
-
-            // Check if the language is supported
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Log an error or show a message if the language is not supported
-            } else {
-                // Speak the text when the activity is created
-                speak("Wynik wynosi: $formattedResult")
-            }
-        } else {
-            // Log an error if the text-to-speech engine initialization failed
-        }
-    }
-
-    private fun speak(text: String) {
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -154,8 +131,8 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         // Remove any spaces from the equation
         val cleanEquation = equation
             .replace("\\s".toRegex(), "")
-            .replace("×", "*")
-            .replace("÷", "/")
+            .replace(MathOperation.MULTIPLICATION.symbol, "*")
+            .replace(MathOperation.DIVISION.symbol, "/")
 
         // Use a stack to evaluate the expression with proper precedence
         val numberStack = Stack<Double>()
