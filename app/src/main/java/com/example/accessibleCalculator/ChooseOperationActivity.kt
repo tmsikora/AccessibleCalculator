@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
@@ -19,7 +18,6 @@ import androidx.annotation.RequiresApi
 class ChooseOperationActivity : BaseActivity() {
 
     private lateinit var operationTextView: TextView
-    private lateinit var acceptButton: Button
     private var currentOperation: MathOperation = MathOperation.ADDITION
     private lateinit var gestureDetector: GestureDetector
     private var isLongPressing = false
@@ -46,7 +44,6 @@ class ChooseOperationActivity : BaseActivity() {
         })
 
         operationTextView = findViewById(R.id.operationTextView)
-        acceptButton = findViewById(R.id.acceptButton)
 
         // Set initial operation
         if (DataHolder.currentEquation.containsAny(
@@ -81,11 +78,6 @@ class ChooseOperationActivity : BaseActivity() {
             }
             gestureDetector.onTouchEvent(event)
             true
-        }
-
-        // Set a click listener for the Accept button
-        acceptButton.setOnClickListener {
-            performActionOnAccept()
         }
 
         onBackPressedDispatcher.addCallback(this) {

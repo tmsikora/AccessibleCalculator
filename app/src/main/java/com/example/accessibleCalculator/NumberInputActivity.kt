@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
@@ -20,7 +19,6 @@ class NumberInputActivity : BaseActivity() {
 
     private var currentNumber: Int = 0
     private lateinit var numberTextView: TextView
-    private lateinit var acceptButton: Button
     private lateinit var gestureDetector: GestureDetector
     private var isLongPressing = false
     private val handler = Handler(Looper.getMainLooper())
@@ -46,7 +44,6 @@ class NumberInputActivity : BaseActivity() {
         })
 
         numberTextView = findViewById(R.id.numberTextView)
-        acceptButton = findViewById(R.id.acceptButton)
 
         if (DataHolder.currentEquation != "" && DataHolder.currentEquation.last() == '÷') {
             currentNumber = 1
@@ -80,11 +77,6 @@ class NumberInputActivity : BaseActivity() {
             }
             gestureDetector.onTouchEvent(event)
             true
-        }
-
-        // Set a click listener for the Accept button
-        acceptButton.setOnClickListener {
-            performActionOnAccept()
         }
 
         onBackPressedDispatcher.addCallback(this) {
