@@ -5,7 +5,6 @@ import TextToSpeechManager
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +18,6 @@ import java.util.Stack
 class ResultActivity : ComponentActivity() {
 
     private var formattedResult: String = ""
-    private lateinit var clickSoundPlayer: MediaPlayer
 
     companion object {
         const val EQUATION_KEY = "equation"
@@ -33,7 +31,7 @@ class ResultActivity : ComponentActivity() {
 
         TextToSpeechManager.initialize(this, "")
         val vibratorManager = VibratorManager.getInstance(this)
-        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
+        val clickSoundPlayerManager = ClickSoundPlayerManager.getInstance(this)
 
         val resultTextView: TextView = findViewById(R.id.resultTextView)
 
@@ -70,7 +68,7 @@ class ResultActivity : ComponentActivity() {
         rootView.setOnClickListener {
             TextToSpeechManager.shutdown()
             vibratorManager.vibrate(400)
-            playClickSound()
+            clickSoundPlayerManager.playClickSound()
             // Clear the equation
             DataHolder.getInstance().currentEquation = ""
             // Start MainActivity when the screen is clicked
@@ -86,12 +84,8 @@ class ResultActivity : ComponentActivity() {
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
         TextToSpeechManager.shutdown()
-        clickSoundPlayer.release()
+        ClickSoundPlayerManager.getInstance(this).release()
         super.onDestroy()
-    }
-
-    private fun playClickSound() {
-        clickSoundPlayer.start()
     }
 
     private fun showExitPrompt() {

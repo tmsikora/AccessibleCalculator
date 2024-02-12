@@ -3,7 +3,6 @@ package com.example.accessibleCalculator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -19,7 +18,6 @@ class InstructionActivity : ComponentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 32000 // 32 seconds
-    private lateinit var clickSoundPlayer: MediaPlayer
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
@@ -30,7 +28,7 @@ class InstructionActivity : ComponentActivity() {
         TextToSpeechManager.initialize(this, getInstructionsText())
 
         val vibratorManager = VibratorManager.getInstance(this)
-        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
+        val clickSoundPlayerManager = ClickSoundPlayerManager.getInstance(this)
 
         // Show the instructions
         val instructionsTextView: TextView = findViewById(R.id.instructionsTextView)
@@ -47,7 +45,7 @@ class InstructionActivity : ComponentActivity() {
             if (event.action == MotionEvent.ACTION_UP) {
                 TextToSpeechManager.shutdown()
                 vibratorManager.vibrate(400)
-                playClickSound()
+                clickSoundPlayerManager.playClickSound()
                 navigateToNumberInput()
                 finish()
             }
@@ -65,12 +63,8 @@ class InstructionActivity : ComponentActivity() {
         TextToSpeechManager.shutdown()
         // Remove the delayed runnable callbacks to prevent memory leaks
         handler.removeCallbacksAndMessages(null)
-        clickSoundPlayer.release()
+        ClickSoundPlayerManager.getInstance(this).release()
         super.onDestroy()
-    }
-
-    private fun playClickSound() {
-        clickSoundPlayer.start()
     }
 
     private fun showExitPrompt() {

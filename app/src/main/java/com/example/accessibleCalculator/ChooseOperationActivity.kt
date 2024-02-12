@@ -3,7 +3,6 @@ package com.example.accessibleCalculator
 import DataHolder
 import android.app.AlertDialog
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +18,6 @@ class ChooseOperationActivity : ComponentActivity() {
     private lateinit var operationTextView: TextView
     private lateinit var acceptButton: Button
     private var currentOperation: MathOperation = MathOperation.ADDITION
-    private lateinit var clickSoundPlayer: MediaPlayer
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +26,7 @@ class ChooseOperationActivity : ComponentActivity() {
 
         TextToSpeechManager.initialize(this, "Wybierz operację matematyczną. Dodawanie.")
         val vibratorManager = VibratorManager.getInstance(this)
-        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
+        val clickSoundPlayerManager = ClickSoundPlayerManager.getInstance(this)
 
         operationTextView = findViewById(R.id.operationTextView)
         acceptButton = findViewById(R.id.acceptButton)
@@ -55,7 +53,7 @@ class ChooseOperationActivity : ComponentActivity() {
         acceptButton.setOnClickListener {
             TextToSpeechManager.shutdown()
             vibratorManager.vibrate(400)    // Vibrate for 400 milliseconds
-            playClickSound()
+            clickSoundPlayerManager.playClickSound()
 
             // Add the current operation symbol to the shared equation string
             addOperationToEquation()
@@ -82,12 +80,8 @@ class ChooseOperationActivity : ComponentActivity() {
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
         TextToSpeechManager.shutdown()
-        clickSoundPlayer.release()
+        ClickSoundPlayerManager.getInstance(this).release()
         super.onDestroy()
-    }
-
-    private fun playClickSound() {
-        clickSoundPlayer.start()
     }
 
     private fun showExitPrompt() {

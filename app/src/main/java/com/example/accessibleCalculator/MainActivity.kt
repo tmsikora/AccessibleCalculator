@@ -3,7 +3,6 @@ package com.example.accessibleCalculator
 import TextToSpeechManager
 import android.app.AlertDialog
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -13,8 +12,6 @@ import androidx.annotation.RequiresApi
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var clickSoundPlayer: MediaPlayer
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +20,7 @@ class MainActivity : ComponentActivity() {
         TextToSpeechManager.initialize(this, "Aby rozpocząć obliczenia, dotknij ekranu.")
 
         val vibratorManager = VibratorManager.getInstance(this)
-        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
+        val clickSoundPlayerManager = ClickSoundPlayerManager.getInstance(this)
 
         val rootLayout: View = this.findViewById(android.R.id.content)
 
@@ -31,7 +28,7 @@ class MainActivity : ComponentActivity() {
         rootLayout.setOnClickListener {
             TextToSpeechManager.shutdown()
             vibratorManager.vibrate(400)
-            playClickSound()
+            clickSoundPlayerManager.playClickSound()
             val intent = Intent(this, NumberInputActivity::class.java)
             startActivity(intent)
         }
@@ -45,12 +42,8 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
         TextToSpeechManager.shutdown()
-        clickSoundPlayer.release()
+        ClickSoundPlayerManager.getInstance(this).release()
         super.onDestroy()
-    }
-
-    private fun playClickSound() {
-        clickSoundPlayer.start()
     }
 
     private fun showExitPrompt() {

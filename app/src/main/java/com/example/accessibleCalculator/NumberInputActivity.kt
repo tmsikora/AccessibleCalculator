@@ -4,10 +4,8 @@ import DataHolder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -22,8 +20,6 @@ class NumberInputActivity : ComponentActivity() {
     private var currentNumber: Int = 0
     private lateinit var numberTextView: TextView
     private lateinit var acceptButton: Button
-    private lateinit var clickSoundPlayer: MediaPlayer
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
@@ -33,7 +29,7 @@ class NumberInputActivity : ComponentActivity() {
 
         TextToSpeechManager.initialize(this, "Wybierz liczbę. $currentNumber")
         val vibratorManager = VibratorManager.getInstance(this)
-        clickSoundPlayer = MediaPlayer.create(this, R.raw.click_sound)
+        val clickSoundPlayerManager = ClickSoundPlayerManager.getInstance(this)
 
         numberTextView = findViewById(R.id.numberTextView)
         acceptButton = findViewById(R.id.acceptButton)
@@ -67,7 +63,7 @@ class NumberInputActivity : ComponentActivity() {
         acceptButton.setOnClickListener {
             TextToSpeechManager.shutdown()
             vibratorManager.vibrate(400)    // Vibrate for 400 milliseconds
-            playClickSound()
+            clickSoundPlayerManager.playClickSound()
             // Add the current number to the shared equation string
             addNumberToEquation()
             // Navigate to ChooseOperationActivity
@@ -84,13 +80,10 @@ class NumberInputActivity : ComponentActivity() {
     override fun onDestroy() {
         // Shutdown the text-to-speech engine when the activity is destroyed
         TextToSpeechManager.shutdown()
-        clickSoundPlayer.release()
+        ClickSoundPlayerManager.getInstance(this).release()
         super.onDestroy()
     }
 
-    private fun playClickSound() {
-        clickSoundPlayer.start()
-    }
 
     private fun showExitPrompt() {
         // Show your custom prompt or dialog here
