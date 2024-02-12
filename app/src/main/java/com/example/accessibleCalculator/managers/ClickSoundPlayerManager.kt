@@ -1,7 +1,8 @@
-package com.example.accessibleCalculator
+package com.example.accessibleCalculator.managers
 
 import android.content.Context
 import android.media.MediaPlayer
+import com.example.accessibleCalculator.R
 
 class ClickSoundPlayerManager private constructor(context: Context) {
 

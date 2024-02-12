@@ -13,6 +13,10 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import com.example.accessibleCalculator.managers.ClickSoundPlayerManager
+import com.example.accessibleCalculator.managers.TextToSpeechManager
+import com.example.accessibleCalculator.managers.VibratorManager
+import com.example.accessibleCalculator.utils.DataHolder
 
 class NumberInputActivity : ComponentActivity() {
 
@@ -107,7 +111,7 @@ class NumberInputActivity : ComponentActivity() {
     }
 
     private fun addNumberToEquation() {
-        // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
+        // Assuming com.example.accessibleCalculator.utils.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentNumber.toString()
     }
 }

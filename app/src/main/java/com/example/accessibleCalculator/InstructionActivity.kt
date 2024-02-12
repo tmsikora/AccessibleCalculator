@@ -13,6 +13,9 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import com.example.accessibleCalculator.managers.ClickSoundPlayerManager
+import com.example.accessibleCalculator.managers.TextToSpeechManager
+import com.example.accessibleCalculator.managers.VibratorManager
 
 class InstructionActivity : ComponentActivity() {
 

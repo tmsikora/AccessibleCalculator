@@ -1,4 +1,4 @@
-package com.example.accessibleCalculator
+package com.example.accessibleCalculator.utils
 
 object DataHolder {
     // List to store entered numbers

@@ -11,6 +11,11 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import com.example.accessibleCalculator.managers.ClickSoundPlayerManager
+import com.example.accessibleCalculator.managers.TextToSpeechManager
+import com.example.accessibleCalculator.managers.VibratorManager
+import com.example.accessibleCalculator.utils.DataHolder
+import com.example.accessibleCalculator.utils.MathOperation
 import java.util.Stack
 
 class ResultActivity : ComponentActivity() {

@@ -1,4 +1,4 @@
-package com.example.accessibleCalculator
+package com.example.accessibleCalculator.utils
 
 enum class MathOperation(val symbol: String) {
     ADDITION("+"),
