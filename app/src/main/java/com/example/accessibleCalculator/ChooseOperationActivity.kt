@@ -26,22 +26,23 @@ class ChooseOperationActivity : BaseActivity() {
         acceptButton = findViewById(R.id.acceptButton)
 
         // Set initial operation
-        updateOperationText(currentOperation)
-        speak("Wybierz operację matematyczną. Dodawanie.")
+        if (DataHolder.currentEquation.containsAny(
+                MathOperation.ADDITION.symbol,
+                MathOperation.SUBTRACTION.symbol,
+                MathOperation.MULTIPLICATION.symbol,
+                MathOperation.DIVISION.symbol)
+        ) {
+            currentOperation = MathOperation.EQUALS
+        }
+        updateOperationTextView(currentOperation)
+        speak("Wybierz operację matematyczną.")
+        speakOperationName()
 
         // Set a click listener for the root layout to change the operation on tap
         findViewById<View>(android.R.id.content).setOnClickListener {
             toggleOperation()
             vibrate(50)    // Vibrate for 50 milliseconds
-            when (currentOperation) {
-                MathOperation.ADDITION -> speak("Dodawanie.")
-                MathOperation.SUBTRACTION -> speak("Odejmowanie.")
-                MathOperation.MULTIPLICATION -> speak("Mnożenie.")
-                MathOperation.DIVISION -> speak("Dzielenie.")
-                else -> {
-                    speak("Równa się.")
-                }
-            }
+            speakOperationName()
         }
 
         // Set a click listener for the Accept button
@@ -72,6 +73,18 @@ class ChooseOperationActivity : BaseActivity() {
         }
     }
 
+    private fun speakOperationName() {
+        when (currentOperation) {
+            MathOperation.ADDITION -> speak("Dodawanie.")
+            MathOperation.SUBTRACTION -> speak("Odejmowanie.")
+            MathOperation.MULTIPLICATION -> speak("Mnożenie.")
+            MathOperation.DIVISION -> speak("Dzielenie.")
+            else -> {
+                speak("Równa się.")
+            }
+        }
+    }
+
     private fun toggleOperation() {
         // Toggle between addition, subtraction, multiplication, and division
         currentOperation = when (currentOperation) {
@@ -83,10 +96,19 @@ class ChooseOperationActivity : BaseActivity() {
         }
 
         // Update the operation text
-        updateOperationText(currentOperation)
+        updateOperationTextView(currentOperation)
     }
 
-    private fun updateOperationText(operation: MathOperation) {
+    private fun String.containsAny(vararg chars: String): Boolean {
+        for (char in chars) {
+            if (this.contains(char)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun updateOperationTextView(operation: MathOperation) {
         operationTextView.text = operation.symbol
     }
 
