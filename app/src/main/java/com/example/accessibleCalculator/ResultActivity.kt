@@ -60,10 +60,10 @@ class ResultActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             val roundedResult = String.format("%.3f", result)
             if (roundedResult.length > result.toString().length) {
                 // If the rounded result has more digits, use the original result
-                result.toString()
+                result.toString().replace(".", ",")
             } else {
                 // Otherwise, use the rounded result
-                roundedResult
+                roundedResult.replace(".", ",")
             }
         }
 
