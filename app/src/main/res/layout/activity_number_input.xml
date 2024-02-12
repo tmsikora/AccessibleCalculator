@@ -9,11 +9,10 @@
         android:id="@+id/numberTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/number_input_0_string"
-        android:textSize="64sp"
+        android:textSize="200sp"
         android:textStyle="bold"
         android:layout_gravity="center"
-        android:layout_marginBottom="16dp"/>
+        android:layout_margin="16dp"/>
 
     <Button
         android:id="@+id/acceptButton"
