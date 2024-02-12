@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import DataHolder
 import android.app.AlertDialog
 import android.content.Intent
 import android.media.MediaPlayer
@@ -127,7 +126,7 @@ class ChooseOperationActivity : ComponentActivity() {
     }
 
     private fun addOperationToEquation() {
-        // Assuming DataHolder is a singleton class with a shared equation string
+        // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentOperation.symbol
     }
 }

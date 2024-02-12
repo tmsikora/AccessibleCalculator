@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import DataHolder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
@@ -115,7 +114,7 @@ class NumberInputActivity : ComponentActivity() {
     }
 
     private fun addNumberToEquation() {
-        // Assuming DataHolder is a singleton class with a shared equation string
+        // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentNumber.toString()
     }
 }
