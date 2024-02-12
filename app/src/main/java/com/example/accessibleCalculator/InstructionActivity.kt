@@ -12,12 +12,12 @@ import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 
+@RequiresApi(Build.VERSION_CODES.O)
 class InstructionActivity : BaseActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 31500 // 31,5 seconds
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

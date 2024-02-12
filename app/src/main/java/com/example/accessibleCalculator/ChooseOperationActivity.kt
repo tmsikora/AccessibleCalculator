@@ -1,26 +1,41 @@
 package com.example.accessibleCalculator
 
-import DataHolder
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 
+@RequiresApi(Build.VERSION_CODES.O)
 class ChooseOperationActivity : BaseActivity() {
 
     private lateinit var operationTextView: TextView
     private lateinit var acceptButton: Button
     private var currentOperation: MathOperation = MathOperation.ADDITION
+    private lateinit var gestureDetector: GestureDetector
+    private var isLongPressing = false
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_operation)
+
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onLongPress(e: MotionEvent) {
+                super.onLongPress(e)
+                isLongPressing = true
+                performActionOnAccept()
+            }
+        })
 
         operationTextView = findViewById(R.id.operationTextView)
         acceptButton = findViewById(R.id.acceptButton)
@@ -39,38 +54,60 @@ class ChooseOperationActivity : BaseActivity() {
         speakOperationName()
 
         // Set a click listener for the root layout to change the operation on tap
-        findViewById<View>(android.R.id.content).setOnClickListener {
-            toggleOperation()
-            vibrate(50)    // Vibrate for 50 milliseconds
-            speakOperationName()
+        findViewById<View>(android.R.id.content).setOnTouchListener { _, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_POINTER_UP -> {
+                    // Reset long press flag
+                    isLongPressing = false
+                    // Start long press detection
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if (isLongPressing) {
+                            performActionOnAccept()
+                        }
+                    }, 4000) // 4 seconds
+
+                    toggleOperation()
+                    vibrate(50)    // Vibrate for 50 milliseconds
+                    speakOperationName()
+                }
+            }
+            gestureDetector.onTouchEvent(event)
+            true
         }
 
         // Set a click listener for the Accept button
         acceptButton.setOnClickListener {
-            textToSpeech.stop()
-            vibrate(400)    // Vibrate for 400 milliseconds
-            playClickSound()
-
-            // Add the current operation symbol to the shared equation string
-            addOperationToEquation()
-
-            if (currentOperation == MathOperation.EQUALS) {
-                // If the current operation is EQUALS, navigate to ResultActivity
-                val intent = Intent(this, ResultActivity::class.java)
-                intent.putExtra(ResultActivity.EQUATION_KEY, DataHolder.getInstance().currentEquation)
-                startActivity(intent)
-            } else {
-                // Navigate to NumberInputActivity (or any other activity you want)
-                val intent = Intent(this, NumberInputActivity::class.java)
-                startActivity(intent)
-            }
-
-            Log.d("ChooseOperationActivity", "Current Equation: ${DataHolder.getInstance().currentEquation}")
+            performActionOnAccept()
         }
 
         onBackPressedDispatcher.addCallback(this) {
             showBackToMainPrompt()
         }
+    }
+
+    private fun performActionOnAccept() {
+        isLongPressing = false
+
+        textToSpeech.stop()
+        vibrate(400)    // Vibrate for 400 milliseconds
+        playClickSound()
+
+        // Add the current operation symbol to the shared equation string
+        addOperationToEquation()
+
+        if (currentOperation == MathOperation.EQUALS) {
+            // If the current operation is EQUALS, navigate to ResultActivity
+            val intent = Intent(this, ResultActivity::class.java)
+            intent.putExtra(ResultActivity.EQUATION_KEY, DataHolder.getInstance().currentEquation)
+            startActivity(intent)
+        } else {
+            // Navigate to NumberInputActivity (or any other activity you want)
+            val intent = Intent(this, NumberInputActivity::class.java)
+            startActivity(intent)
+        }
+
+        Log.d("ChooseOperationActivity", "Current Equation: ${DataHolder.getInstance().currentEquation}")
     }
 
     private fun speakOperationName() {
@@ -113,7 +150,7 @@ class ChooseOperationActivity : BaseActivity() {
     }
 
     private fun addOperationToEquation() {
-        // Assuming DataHolder is a singleton class with a shared equation string
+        // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentOperation.symbol
     }
 }

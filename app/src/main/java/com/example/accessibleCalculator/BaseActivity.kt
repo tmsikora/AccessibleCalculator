@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import DataHolder
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -16,6 +15,7 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     lateinit var textToSpeech: TextToSpeech
@@ -103,7 +103,6 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     protected fun vibrate(milliseconds: Long) {
         val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
         vibrator.vibrate(vibrationEffect)

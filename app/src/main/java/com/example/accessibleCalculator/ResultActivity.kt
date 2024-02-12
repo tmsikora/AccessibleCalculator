@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import DataHolder
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
@@ -12,6 +11,7 @@ import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import java.util.Stack
 
+@RequiresApi(Build.VERSION_CODES.O)
 class ResultActivity : BaseActivity() {
 
     private var formattedResult: String = ""
@@ -20,7 +20,6 @@ class ResultActivity : BaseActivity() {
         const val EQUATION_KEY = "equation"
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

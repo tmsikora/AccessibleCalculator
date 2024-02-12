@@ -7,9 +7,9 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : BaseActivity() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,7 +30,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun performActionOnClick() {
         textToSpeech.stop()
         vibrate(400)
