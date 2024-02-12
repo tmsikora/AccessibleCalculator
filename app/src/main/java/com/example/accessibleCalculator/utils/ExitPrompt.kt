@@ -32,7 +32,7 @@ class ExitPrompt {
             // For example, you can use AlertDialog to display the prompt
             AlertDialog.Builder(context)
                 .setMessage("Czy na pewno chcesz wyjść z aplikacji?")
-                .setPositiveButton("Tak") { dialog, _ ->
+                .setPositiveButton("Tak") { _, _ ->
                     finishActivity(context)
                 }
                 .setNegativeButton("Nie") { dialog, _ ->
