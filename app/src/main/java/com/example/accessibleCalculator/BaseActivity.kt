@@ -1,16 +1,20 @@
 package com.example.accessibleCalculator
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.speech.tts.TextToSpeech
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import java.util.Locale
@@ -24,6 +28,8 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var vibrator: Vibrator
     private lateinit var clickSoundPlayer: MediaPlayer
+
+    private var colorAnimation: ValueAnimator? = null
 
     private val screenReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -136,5 +142,27 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    protected fun startColorAnimation() {
+        val colorFrom = Color.parseColor("#121212")
+        val colorTo = Color.parseColor("#009100")
+        colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
+            duration = 2000 // 2 seconds
+            addUpdateListener { animator ->
+                val color = animator.animatedValue as Int
+                // Set the background color of the root layout
+                findViewById<View>(android.R.id.content).setBackgroundColor(color)
+            }
+        }
+        colorAnimation?.start()
+    }
+
+    protected fun reverseColorAnimation() {
+        colorAnimation?.let { animation ->
+            if (animation.isRunning) {
+                animation.reverse()
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import android.animation.AnimatorInflater
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
@@ -46,10 +45,6 @@ class ChooseOperationActivity : BaseActivity() {
             }
         })
 
-        // Load the animation
-        val colorTransition = AnimatorInflater.loadAnimator(this, R.anim.color_transition)
-        colorTransition.setTarget(findViewById<View>(android.R.id.content))
-
         operationTextView = findViewById(R.id.operationTextView)
         acceptButton = findViewById(R.id.acceptButton)
 
@@ -72,11 +67,11 @@ class ChooseOperationActivity : BaseActivity() {
                 MotionEvent.ACTION_DOWN,
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     // Start the animation
-                    colorTransition.start()
+                    startColorAnimation()
                 }
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> {
-                    colorTransition.cancel()
+                    reverseColorAnimation()
                     // Cancel long press detection
                     isLongPressing = false
                     toggleOperation()
