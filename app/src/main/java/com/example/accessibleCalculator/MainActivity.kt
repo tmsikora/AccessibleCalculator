@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +10,7 @@ import androidx.annotation.RequiresApi
 import com.example.accessibleCalculator.managers.ClickSoundPlayerManager
 import com.example.accessibleCalculator.managers.TextToSpeechManager
 import com.example.accessibleCalculator.managers.VibratorManager
+import com.example.accessibleCalculator.utils.ExitPrompt
 
 class MainActivity : ComponentActivity() {
 
@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
 
         TextToSpeechManager.initialize(this, "Aby rozpocząć obliczenia, dotknij ekranu.")
-
         val vibratorManager = VibratorManager.getInstance(this)
         val clickSoundPlayerManager = ClickSoundPlayerManager.getInstance(this)
 
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this) {
-            showExitPrompt()
+            ExitPrompt.showExitPromptSimple(this@MainActivity)
         }
 
     }
@@ -48,15 +47,4 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    private fun showExitPrompt() {
-        // Show your custom prompt or dialog here
-        // For example, you can use AlertDialog to display the prompt
-        AlertDialog.Builder(this)
-            .setMessage("Czy na pewno chcesz wyjść z aplikacji?")
-            .setPositiveButton("Tak") { _, _ -> finishAffinity() } // Exit the entire app
-            .setNegativeButton("Nie") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
 }

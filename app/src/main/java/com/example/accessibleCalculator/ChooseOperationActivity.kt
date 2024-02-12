@@ -1,6 +1,5 @@
 package com.example.accessibleCalculator
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +14,7 @@ import com.example.accessibleCalculator.managers.ClickSoundPlayerManager
 import com.example.accessibleCalculator.managers.TextToSpeechManager
 import com.example.accessibleCalculator.managers.VibratorManager
 import com.example.accessibleCalculator.utils.DataHolder
+import com.example.accessibleCalculator.utils.ExitPrompt
 import com.example.accessibleCalculator.utils.MathOperation
 
 class ChooseOperationActivity : ComponentActivity() {
@@ -77,7 +77,7 @@ class ChooseOperationActivity : ComponentActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this) {
-            showExitPrompt()
+            ExitPrompt.showExitPrompt(this@ChooseOperationActivity)
         }
     }
 
@@ -86,24 +86,6 @@ class ChooseOperationActivity : ComponentActivity() {
         TextToSpeechManager.shutdown()
         ClickSoundPlayerManager.getInstance(this).release()
         super.onDestroy()
-    }
-
-    private fun showExitPrompt() {
-        // Show your custom prompt or dialog here
-        // For example, you can use AlertDialog to display the prompt
-        AlertDialog.Builder(this)
-            .setMessage("Czy chcesz wrócić do ekranu głównego aplikacji?")
-            .setPositiveButton("Tak") { _, _ ->
-                DataHolder.getInstance().currentEquation = ""
-                // Navigate to MainActivity
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                startActivity(intent)
-            }
-            .setNegativeButton("Nie") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
     }
 
     private fun toggleOperation() {
