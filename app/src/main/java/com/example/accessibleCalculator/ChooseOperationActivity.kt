@@ -1,5 +1,6 @@
 package com.example.accessibleCalculator
 
+import android.animation.AnimatorInflater
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
@@ -23,8 +24,10 @@ class ChooseOperationActivity : BaseActivity() {
     private var currentOperation: MathOperation = MathOperation.ADDITION
     private lateinit var gestureDetector: GestureDetector
     private var isLongPressing = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val delayedTimeMillis: Long = 1000 // 1 second
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_operation)
@@ -33,9 +36,19 @@ class ChooseOperationActivity : BaseActivity() {
             override fun onLongPress(e: MotionEvent) {
                 super.onLongPress(e)
                 isLongPressing = true
-                performActionOnAccept()
+                handler.removeCallbacksAndMessages(null)
+                // Start long press detection
+                handler.postDelayed({
+                    if (isLongPressing) {
+                        performActionOnAccept()
+                    }
+                }, delayedTimeMillis)
             }
         })
+
+        // Load the animation
+        val colorTransition = AnimatorInflater.loadAnimator(this, R.anim.color_transition)
+        colorTransition.setTarget(findViewById<View>(android.R.id.content))
 
         operationTextView = findViewById(R.id.operationTextView)
         acceptButton = findViewById(R.id.acceptButton)
@@ -56,17 +69,16 @@ class ChooseOperationActivity : BaseActivity() {
         // Set a click listener for the root layout to change the operation on tap
         findViewById<View>(android.R.id.content).setOnTouchListener { _, event ->
             when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN,
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    // Start the animation
+                    colorTransition.start()
+                }
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> {
-                    // Reset long press flag
+                    colorTransition.cancel()
+                    // Cancel long press detection
                     isLongPressing = false
-                    // Start long press detection
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (isLongPressing) {
-                            performActionOnAccept()
-                        }
-                    }, 4000) // 4 seconds
-
                     toggleOperation()
                     vibrate(50)    // Vibrate for 50 milliseconds
                     speakOperationName()
@@ -86,9 +98,14 @@ class ChooseOperationActivity : BaseActivity() {
         }
     }
 
+    override fun onDestroy() {
+        // Remove the delayed runnable callbacks to prevent memory leaks
+        handler.removeCallbacksAndMessages(null)
+        super.onDestroy()
+    }
+
     private fun performActionOnAccept() {
         isLongPressing = false
-
         textToSpeech.stop()
         vibrate(400)    // Vibrate for 400 milliseconds
         playClickSound()
