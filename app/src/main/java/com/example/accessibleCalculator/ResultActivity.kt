@@ -1,7 +1,5 @@
 package com.example.accessibleCalculator
 
-import DataHolder
-import TextToSpeechManager
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
