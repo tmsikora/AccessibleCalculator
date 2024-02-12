@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
         // Set a click listener on the root layout to start the InstructionActivity
         rootLayout.setOnClickListener {
-//            TextToSpeechManager.shutdown()
+            TextToSpeechManager.shutdown()
             vibrate()
             playClickSound()
             val intent = Intent(this, NumberInputActivity::class.java)
