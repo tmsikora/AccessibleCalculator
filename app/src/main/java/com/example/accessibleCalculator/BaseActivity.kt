@@ -31,6 +31,7 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var clickSoundPlayer: MediaPlayer
 
     private var colorAnimation: ValueAnimator? = null
+    private var isAnimationStarted: Boolean = false
 
     private val screenReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -162,12 +163,14 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             }
         }
         colorAnimation?.start()
+        isAnimationStarted = true
     }
 
     protected fun reverseColorAnimation() {
         colorAnimation?.let { animation ->
-            if (animation.isRunning) {
+            if (animation.isRunning || isAnimationStarted) {
                 animation.reverse()
+                isAnimationStarted = false
             }
         }
     }
