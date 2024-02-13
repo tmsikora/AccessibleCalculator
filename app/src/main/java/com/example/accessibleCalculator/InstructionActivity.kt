@@ -16,7 +16,7 @@ import androidx.annotation.RequiresApi
 class InstructionActivity : BaseActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
-    private val delayedTimeMillis: Long = 31500 // 31,5 seconds
+    private val delayedTimeMillis: Long = 32000 // 32 seconds
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +60,8 @@ class InstructionActivity : BaseActivity() {
     private fun getInstructionsText(): String {
         // Customize the instructions text here
         return "Instrukcja obsługi kalkulatora:\n\n" +
-                "1. Wybierz liczbę. Każde dotknięcie ekranu zwiększa liczbę. Zatwierdź liczbę przytrzymując dłoń nisko nad ekranem.\n" +
-                "2. Wybierz operację matematyczną. Przełączaj się między operacjami dotykając ekranu. Zatwierdź przytrzymując dłoń nisko nad ekranem.\n" +
+                "1. Wybierz liczbę. Każde dotknięcie ekranu zwiększa liczbę. Zatwierdź przytrzymując palec na ekranie lub dłoń nisko nad ekranem.\n" +
+                "2. Wybierz operację matematyczną. Przełączaj się między operacjami dotykając ekranu. Zatwierdź przytrzymując palec na ekranie lub dłoń nisko nad ekranem.\n" +
                 "3. Wybierz kolejną liczbę. Możesz wykonywać wiele obliczeń w jednym działaniu.\n" +
                 "4. Aby uzyskać wynik, wybierz operację matematyczną \"równa się\".\n\n"
     }
