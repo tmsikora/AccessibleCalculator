@@ -29,6 +29,7 @@ class NumberInputActivity : BaseActivity(), SensorEventListener {
     private var isLongPressing = false
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 1000 // 1 second
+    private var isAnimating = false
 
     private lateinit var sensorManager: SensorManager
     private var proximitySensor: Sensor? = null
@@ -131,12 +132,19 @@ class NumberInputActivity : BaseActivity(), SensorEventListener {
         if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
             val distance = event.values[0]
             if (distance < 5.0f) {
+                if (!isAnimating) {
+                    startColorAnimation()
+                    isAnimating = true
+                }
                 handlerProximity.postDelayed({
                     performActionOnAccept()
                 }, 3000) // 3000 milliseconds = 3 seconds
             }
-            else
-            {
+            else {
+                if (isAnimating) {
+                    reverseColorAnimation()
+                    isAnimating = false
+                }
                 handlerProximity.removeCallbacksAndMessages(null)
             }
         }

@@ -148,7 +148,7 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         val colorFrom = Color.parseColor("#121212")
         val colorTo = Color.parseColor("#009100")
         colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
-            duration = 2000 // 2 seconds
+            duration = 3000 // 3 seconds
             addUpdateListener { animator ->
                 val color = animator.animatedValue as Int
                 // Set the background color of the root layout
