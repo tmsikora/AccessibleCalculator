@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Build
@@ -145,10 +146,15 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     protected fun startColorAnimation() {
-        val colorFrom = Color.parseColor("#121212")
+        val isDarkMode = when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            else -> false
+        }
+
+        val colorFrom = if (isDarkMode) Color.parseColor("#121212") else Color.WHITE
         val colorTo = Color.parseColor("#009100")
         colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
-            duration = 3000 // 3 seconds
+            duration = if (isDarkMode) 2000 else 1300   // 2 seconds in dark mode; 1,3 seconds in light mode
             addUpdateListener { animator ->
                 val color = animator.animatedValue as Int
                 // Set the background color of the root layout
