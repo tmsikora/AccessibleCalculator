@@ -1,7 +1,12 @@
 package com.example.accessibleCalculator
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -14,8 +19,9 @@ import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 
+@Suppress("DEPRECATION")
 @RequiresApi(Build.VERSION_CODES.O)
-class ChooseOperationActivity : BaseActivity() {
+class ChooseOperationActivity : BaseActivity(), SensorEventListener {
 
     private lateinit var operationTextView: TextView
     private var currentOperation: MathOperation = MathOperation.ADDITION
@@ -24,16 +30,24 @@ class ChooseOperationActivity : BaseActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 1000 // 1 second
 
+    private lateinit var sensorManager: SensorManager
+    private var proximitySensor: Sensor? = null
+    private val handlerProximity = Handler()
+
     @SuppressLint("ClickableViewAccessibility", "ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_operation)
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
 
         gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onLongPress(e: MotionEvent) {
                 super.onLongPress(e)
                 isLongPressing = true
                 handler.removeCallbacksAndMessages(null)
+                handlerProximity.removeCallbacksAndMessages(null)
                 // Start long press detection
                 handler.postDelayed({
                     if (isLongPressing) {
@@ -88,6 +102,7 @@ class ChooseOperationActivity : BaseActivity() {
     override fun onDestroy() {
         // Remove the delayed runnable callbacks to prevent memory leaks
         handler.removeCallbacksAndMessages(null)
+        handlerProximity.removeCallbacksAndMessages(null)
         super.onDestroy()
     }
 
@@ -156,5 +171,35 @@ class ChooseOperationActivity : BaseActivity() {
     private fun addOperationToEquation() {
         // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentOperation.symbol
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
+            val distance = event.values[0]
+            if (distance < 5.0f) {
+                handlerProximity.postDelayed({
+                    performActionOnAccept()
+                }, 3000) // 3000 milliseconds = 3 seconds
+            }
+            else
+            {
+                handlerProximity.removeCallbacksAndMessages(null)
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // Do something here if sensor accuracy changes.
+    }
+
+    override fun onResume() {
+        // Register a listener for the sensor.
+        super.onResume()
+        proximitySensor?.let { sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL) }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
     }
 }
