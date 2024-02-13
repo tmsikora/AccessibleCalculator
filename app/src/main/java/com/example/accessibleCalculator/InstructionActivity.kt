@@ -63,7 +63,7 @@ class InstructionActivity : BaseActivity() {
                 "1. Wybierz liczbę. Każde dotknięcie ekranu zwiększa liczbę. Zatwierdź przytrzymując palec na ekranie lub dłoń nisko nad ekranem.\n" +
                 "2. Wybierz operację matematyczną. Przełączaj się między operacjami dotykając ekranu. Zatwierdź przytrzymując palec na ekranie lub dłoń nisko nad ekranem.\n" +
                 "3. Wybierz kolejną liczbę. Możesz wykonywać wiele obliczeń w jednym działaniu.\n" +
-                "4. Aby uzyskać wynik, wybierz operację matematyczną \"równa się\".\n\n"
+                "4. Aby uzyskać wynik, wybierz operację matematyczną \"=\"."
     }
 
     private fun navigateToNumberInput() {
