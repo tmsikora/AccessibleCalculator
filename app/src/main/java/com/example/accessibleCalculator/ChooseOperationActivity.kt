@@ -30,6 +30,7 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 1000 // 1 second
     private var isAnimating = false
+    private var pointersOnScreen: Int = 0
 
     private lateinit var sensorManager: SensorManager
     private var proximitySensor: Sensor? = null
@@ -78,12 +79,21 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN,
                 MotionEvent.ACTION_POINTER_DOWN -> {
-                    // Start the animation
-                    startColorAnimation()
+                    pointersOnScreen++
+                    if (pointersOnScreen == 1)
+                    {
+                        // Start the animation
+                        startColorAnimation()
+                    }
                 }
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> {
-                    reverseColorAnimation()
+                    pointersOnScreen--
+                    if (pointersOnScreen == 0)
+                    {
+                        // Reverse the animation
+                        reverseColorAnimation()
+                    }
                     // Cancel long press detection
                     isLongPressing = false
                     toggleOperation()
