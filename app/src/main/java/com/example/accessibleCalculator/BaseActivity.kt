@@ -86,7 +86,8 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 initialized = true
                 textToSpeak?.let { speak(it) }
             }
-        } else {
+        }
+        else {
             // Handle initialization failure
         }
     }
@@ -94,7 +95,8 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     fun speak(text: String) {
         if (initialized) {
             textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-        } else {
+        }
+        else {
             textToSpeak += text
         }
     }
@@ -129,8 +131,6 @@ open class BaseActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     protected fun showBackToMainPrompt() {
-        // Show your custom prompt or dialog here
-        // For example, you can use AlertDialog to display the prompt
         AlertDialog.Builder(this)
             .setMessage("Czy chcesz wrócić do ekranu głównego aplikacji?")
             .setPositiveButton("Tak") { _, _ ->

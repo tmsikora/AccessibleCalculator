@@ -18,7 +18,6 @@ class MainActivity : BaseActivity() {
 
         val rootLayout: View = findViewById(android.R.id.content)
 
-        // Set a click listener on the root layout to start the InstructionActivity
         rootLayout.setOnClickListener {
             // Stop the text-to-speech, vibrate, play click sound, and start NumberInputActivity
             performActionOnClick()

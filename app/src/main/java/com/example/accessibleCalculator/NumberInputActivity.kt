@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -83,6 +82,7 @@ class NumberInputActivity : BaseActivity(), SensorEventListener {
                     }
                     if (pointersOnScreen > 1)
                     {
+                        // Reverse the animation
                         reverseColorAnimation()
                         moreThanOneClick = true
                     }
@@ -134,7 +134,6 @@ class NumberInputActivity : BaseActivity(), SensorEventListener {
         // Navigate to ChooseOperationActivity
         val intent = Intent(this, ChooseOperationActivity::class.java)
         startActivity(intent)
-        Log.d("NumberInputActivity", "Current Equation: ${DataHolder.getInstance().currentEquation}")
     }
 
     private fun updateNumberTextView() {
@@ -142,7 +141,6 @@ class NumberInputActivity : BaseActivity(), SensorEventListener {
     }
 
     private fun addNumberToEquation() {
-        // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentNumber.toString()
     }
 
@@ -156,7 +154,7 @@ class NumberInputActivity : BaseActivity(), SensorEventListener {
                 }
                 handlerProximity.postDelayed({
                     performActionOnAccept()
-                }, 3000) // 3000 milliseconds = 3 seconds
+                }, 3000) // 3 seconds
             }
             else {
                 if (isAnimating) {

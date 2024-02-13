@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.addCallback
@@ -29,11 +28,9 @@ class ResultActivity : BaseActivity() {
 
         // Retrieve the equation from the intent
         val equation = intent.getStringExtra(EQUATION_KEY)
-        Log.d("ResultActivity", "Received equation from intent: $equation")
 
         // Parse and evaluate the equation
         val result = evaluateEquation(equation)
-        Log.d("ResultActivity", "Calculated result: $result")
 
         // Format the result based on whether it's a whole number or not
         formattedResult = if (result == result.toInt().toDouble()) {
@@ -63,7 +60,6 @@ class ResultActivity : BaseActivity() {
         // Find the root view of the layout
         val rootView = findViewById<View>(android.R.id.content)
 
-        // Set a click listener on the root view
         rootView.setOnClickListener {
             textToSpeech.stop()
             vibrate(400)
@@ -111,7 +107,8 @@ class ResultActivity : BaseActivity() {
                 }
                 numberStack.push(stringBuilder.toString().toDouble())
                 continue
-            } else if (c in "+-*/") {
+            }
+            else if (c in "+-*/") {
                 // If the character is an operator
                 while (!operatorStack.isEmpty() && precedence.getOrDefault(c, 0) <= precedence.getOrDefault(operatorStack.peek(), 0)) {
                     performOperation(numberStack, operatorStack)

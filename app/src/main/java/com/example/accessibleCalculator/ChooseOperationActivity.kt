@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -89,6 +88,7 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
                     }
                     if (pointersOnScreen > 1)
                     {
+                        // Reverse the animation
                         reverseColorAnimation()
                         moreThanOneClick = true
                     }
@@ -141,12 +141,10 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
             intent.putExtra(ResultActivity.EQUATION_KEY, DataHolder.getInstance().currentEquation)
             startActivity(intent)
         } else {
-            // Navigate to NumberInputActivity (or any other activity you want)
+            // Navigate to NumberInputActivity
             val intent = Intent(this, NumberInputActivity::class.java)
             startActivity(intent)
         }
-
-        Log.d("ChooseOperationActivity", "Current Equation: ${DataHolder.getInstance().currentEquation}")
     }
 
     private fun speakOperationName() {
@@ -162,7 +160,7 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
     }
 
     private fun toggleOperation() {
-        // Toggle between addition, subtraction, multiplication, and division
+        // Toggle between addition, subtraction, multiplication, division and equals
         currentOperation = when (currentOperation) {
             MathOperation.ADDITION -> MathOperation.SUBTRACTION
             MathOperation.SUBTRACTION -> MathOperation.MULTIPLICATION
@@ -189,7 +187,6 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
     }
 
     private fun addOperationToEquation() {
-        // Assuming com.example.accessibleCalculator.DataHolder is a singleton class with a shared equation string
         DataHolder.getInstance().currentEquation += currentOperation.symbol
     }
 
@@ -203,7 +200,7 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
                 }
                 handlerProximity.postDelayed({
                     performActionOnAccept()
-                }, 3000) // 3000 milliseconds = 3 seconds
+                }, 3000) // 3 seconds
             }
             else
             {

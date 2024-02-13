@@ -58,7 +58,6 @@ class InstructionActivity : BaseActivity() {
     }
 
     private fun getInstructionsText(): String {
-        // Customize the instructions text here
         return "Instrukcja obsługi kalkulatora:\n\n" +
                 "1. Wybierz liczbę. Każde dotknięcie ekranu zwiększa liczbę. Zatwierdź przytrzymując palec na ekranie lub dłoń nisko nad ekranem.\n" +
                 "2. Wybierz operację matematyczną. Przełączaj się między operacjami dotykając ekranu. Zatwierdź przytrzymując palec na ekranie lub dłoń nisko nad ekranem.\n" +
