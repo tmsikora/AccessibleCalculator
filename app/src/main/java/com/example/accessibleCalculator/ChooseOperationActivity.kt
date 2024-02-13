@@ -29,8 +29,9 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
     private var isLongPressing = false
     private val handler = Handler(Looper.getMainLooper())
     private val delayedTimeMillis: Long = 1000 // 1 second
-    private var isAnimating = false
+    private var isAnimating: Boolean = false
     private var pointersOnScreen: Int = 0
+    private var moreThanOneClick: Boolean = false
 
     private lateinit var sensorManager: SensorManager
     private var proximitySensor: Sensor? = null
@@ -52,7 +53,8 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
                 handlerProximity.removeCallbacksAndMessages(null)
                 // Start long press detection
                 handler.postDelayed({
-                    if (isLongPressing) {
+                    if (!moreThanOneClick && isLongPressing) {
+                        reverseColorAnimation()
                         performActionOnAccept()
                     }
                 }, delayedTimeMillis)
@@ -85,20 +87,27 @@ class ChooseOperationActivity : BaseActivity(), SensorEventListener {
                         // Start the animation
                         startColorAnimation()
                     }
+                    if (pointersOnScreen > 1)
+                    {
+                        reverseColorAnimation()
+                        moreThanOneClick = true
+                    }
                 }
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> {
                     pointersOnScreen--
                     if (pointersOnScreen == 0)
                     {
+                        moreThanOneClick = false
                         // Reverse the animation
                         reverseColorAnimation()
+
+                        // Cancel long press detection
+                        isLongPressing = false
+                        toggleOperation()
+                        vibrate(50)    // Vibrate for 50 milliseconds
+                        speakOperationName()
                     }
-                    // Cancel long press detection
-                    isLongPressing = false
-                    toggleOperation()
-                    vibrate(50)    // Vibrate for 50 milliseconds
-                    speakOperationName()
                 }
             }
             gestureDetector.onTouchEvent(event)
