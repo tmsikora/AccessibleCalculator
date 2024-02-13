@@ -11,8 +11,6 @@
         android:layout_height="wrap_content"
         android:textSize="200sp"
         android:textStyle="bold"
-        android:shadowColor="#000000"
-        android:shadowRadius="6"
         android:layout_gravity="center"
         android:layout_margin="16dp"/>
 
